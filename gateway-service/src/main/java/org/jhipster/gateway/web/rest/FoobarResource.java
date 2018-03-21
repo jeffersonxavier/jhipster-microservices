@@ -8,6 +8,7 @@ import org.jhipster.gateway.domain.Foobar;
 import org.jhipster.gateway.service.FoobarService;
 import org.jhipster.gateway.service.dto.BarDTO;
 import org.jhipster.gateway.service.dto.FooDTO;
+import org.jhipster.gateway.service.dto.FoobarDTO;
 import org.jhipster.gateway.web.rest.errors.BadRequestAlertException;
 import org.jhipster.gateway.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -96,13 +97,12 @@ public class FoobarResource {
     public List<Foobar> getAllFoobars() {
         log.debug("REST request to get all Foobars");
 
-        List<BarDTO> bars = barClient.findAll();
-        log.debug("========================");
-        log.debug("All bars {}", bars);
+        BarDTO bar = barClient.getOne(1L);
+        FooDTO foo = fooClient.getOne(1L);
 
-        List<FooDTO> foos = fooClient.findAll();
+        FoobarDTO foobar = new FoobarDTO(foo, bar);
         log.debug("========================");
-        log.debug("All foos {}", foos);
+        log.debug("Foobar is {}", foobar);
 
         return foobarService.findAll();
     }
