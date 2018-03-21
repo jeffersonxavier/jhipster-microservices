@@ -1,6 +1,9 @@
 package org.jhipster.gateway.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+
+import org.jhipster.gateway.client.BarClient;
+import org.jhipster.gateway.domain.Bar;
 import org.jhipster.gateway.domain.Foobar;
 import org.jhipster.gateway.service.FoobarService;
 import org.jhipster.gateway.web.rest.errors.BadRequestAlertException;
@@ -8,6 +11,7 @@ import org.jhipster.gateway.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +33,9 @@ public class FoobarResource {
     private static final String ENTITY_NAME = "foobar";
 
     private final FoobarService foobarService;
+
+    @Autowired
+    private BarClient barClient;
 
     public FoobarResource(FoobarService foobarService) {
         this.foobarService = foobarService;
@@ -85,8 +92,17 @@ public class FoobarResource {
     @Timed
     public List<Foobar> getAllFoobars() {
         log.debug("REST request to get all Foobars");
+
+        Bar bar = new Bar();
+        bar.setBarName("barName");
+        barClient.create(bar);
+
+        List<Bar> bars = barClient.findAll();
+        log.debug("========================");
+        log.debug("All bars {}", bars);
+
         return foobarService.findAll();
-        }
+    }
 
     /**
      * GET  /foobars/:id : get the "id" foobar.
