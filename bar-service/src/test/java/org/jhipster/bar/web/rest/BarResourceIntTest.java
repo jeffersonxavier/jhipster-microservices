@@ -1,7 +1,7 @@
 package org.jhipster.bar.web.rest;
 
 import org.jhipster.bar.BarApp;
-
+import org.jhipster.bar.client.FooClient;
 import org.jhipster.bar.domain.Bar;
 import org.jhipster.bar.repository.BarRepository;
 import org.jhipster.bar.service.BarService;
@@ -49,6 +49,9 @@ public class BarResourceIntTest {
     private BarService barService;
 
     @Autowired
+    private FooClient fooClient;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -67,7 +70,7 @@ public class BarResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final BarResource barResource = new BarResource(barService);
+        final BarResource barResource = new BarResource(barService, fooClient);
         this.restBarMockMvc = MockMvcBuilders.standaloneSetup(barResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
