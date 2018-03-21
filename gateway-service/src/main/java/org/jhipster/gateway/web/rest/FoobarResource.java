@@ -3,7 +3,9 @@ package org.jhipster.gateway.web.rest;
 import com.codahale.metrics.annotation.Timed;
 
 import org.jhipster.gateway.client.BarClient;
+import org.jhipster.gateway.client.FooClient;
 import org.jhipster.gateway.domain.Bar;
+import org.jhipster.gateway.domain.Foo;
 import org.jhipster.gateway.domain.Foobar;
 import org.jhipster.gateway.service.FoobarService;
 import org.jhipster.gateway.web.rest.errors.BadRequestAlertException;
@@ -34,10 +36,12 @@ public class FoobarResource {
     private final FoobarService foobarService;
 
     private BarClient barClient;
+    private FooClient fooClient;
 
-    public FoobarResource(FoobarService foobarService, BarClient barClient) {
+    public FoobarResource(FoobarService foobarService, BarClient barClient, FooClient fooClient) {
         this.foobarService = foobarService;
         this.barClient = barClient;
+        this.fooClient = fooClient;
     }
 
     /**
@@ -95,6 +99,10 @@ public class FoobarResource {
         List<Bar> bars = barClient.findAll();
         log.debug("========================");
         log.debug("All bars {}", bars);
+
+        List<Foo> foos = fooClient.findAll();
+        log.debug("========================");
+        log.debug("All foos {}", foos);
 
         return foobarService.findAll();
     }
