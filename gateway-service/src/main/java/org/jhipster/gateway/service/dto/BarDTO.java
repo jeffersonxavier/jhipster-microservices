@@ -1,11 +1,6 @@
-package org.jhipster.gateway.domain;
+package org.jhipster.gateway.service.dto;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-public class Bar implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class BarDTO {
 
     private String barName;
 

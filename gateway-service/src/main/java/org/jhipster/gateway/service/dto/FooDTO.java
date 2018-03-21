@@ -1,6 +1,7 @@
-package org.jhipster.gateway.domain;
+package org.jhipster.gateway.service.dto;
 
-public class Foo {
+public class FooDTO {
+
     private String fooName;
 
     /**
