@@ -1,6 +1,7 @@
 package org.jhipster.gateway.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Bar implements Serializable {
 
@@ -20,5 +21,11 @@ public class Bar implements Serializable {
      */
     public void setBarName(String barName) {
         this.barName = barName;
+    }
+
+    @Override
+    public String toString() {
+        return "Bar{" +
+            "barName=" + getBarName() + "}";
     }
 }

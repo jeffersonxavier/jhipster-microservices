@@ -11,7 +11,6 @@ import org.jhipster.gateway.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,11 +33,11 @@ public class FoobarResource {
 
     private final FoobarService foobarService;
 
-    @Autowired
     private BarClient barClient;
 
-    public FoobarResource(FoobarService foobarService) {
+    public FoobarResource(FoobarService foobarService, BarClient barClient) {
         this.foobarService = foobarService;
+        this.barClient = barClient;
     }
 
     /**
@@ -92,10 +91,6 @@ public class FoobarResource {
     @Timed
     public List<Foobar> getAllFoobars() {
         log.debug("REST request to get all Foobars");
-
-        Bar bar = new Bar();
-        bar.setBarName("barName");
-        barClient.create(bar);
 
         List<Bar> bars = barClient.findAll();
         log.debug("========================");

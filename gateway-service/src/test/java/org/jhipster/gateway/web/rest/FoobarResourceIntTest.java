@@ -1,7 +1,7 @@
 package org.jhipster.gateway.web.rest;
 
 import org.jhipster.gateway.GatewayServiceApp;
-
+import org.jhipster.gateway.client.BarClient;
 import org.jhipster.gateway.domain.Foobar;
 import org.jhipster.gateway.repository.FoobarRepository;
 import org.jhipster.gateway.service.FoobarService;
@@ -49,6 +49,9 @@ public class FoobarResourceIntTest {
     private FoobarService foobarService;
 
     @Autowired
+    private BarClient barClient;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -67,7 +70,7 @@ public class FoobarResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final FoobarResource foobarResource = new FoobarResource(foobarService);
+        final FoobarResource foobarResource = new FoobarResource(foobarService, barClient);
         this.restFoobarMockMvc = MockMvcBuilders.standaloneSetup(foobarResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
