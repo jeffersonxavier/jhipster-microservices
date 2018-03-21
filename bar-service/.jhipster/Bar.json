@@ -1,0 +1,18 @@
+{
+    "fluentMethods": true,
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "barName",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20180321161528",
+    "dto": "no",
+    "service": "serviceClass",
+    "entityTableName": "bar",
+    "jpaMetamodelFiltering": false,
+    "pagination": "no",
+    "microserviceName": "bar",
+    "searchEngine": false
+}
