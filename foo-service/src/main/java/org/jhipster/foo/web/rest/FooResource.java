@@ -1,8 +1,11 @@
 package org.jhipster.foo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+
+import org.jhipster.foo.client.BarClient;
 import org.jhipster.foo.domain.Foo;
 import org.jhipster.foo.service.FooService;
+import org.jhipster.foo.service.dto.BarDTO;
 import org.jhipster.foo.web.rest.errors.BadRequestAlertException;
 import org.jhipster.foo.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -29,9 +32,11 @@ public class FooResource {
     private static final String ENTITY_NAME = "foo";
 
     private final FooService fooService;
+    private final BarClient barClient;
 
-    public FooResource(FooService fooService) {
+    public FooResource(FooService fooService, BarClient barClient) {
         this.fooService = fooService;
+        this.barClient = barClient;
     }
 
     /**
@@ -98,6 +103,11 @@ public class FooResource {
     @Timed
     public ResponseEntity<Foo> getFoo(@PathVariable Long id) {
         log.debug("REST request to get Foo : {}", id);
+
+        List<BarDTO> bars = this.barClient.findAll();
+        log.debug("========================");
+        log.debug("All bars {}", bars);
+
         Foo foo = fooService.findOne(id);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(foo));
     }

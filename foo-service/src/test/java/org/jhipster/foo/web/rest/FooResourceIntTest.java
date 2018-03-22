@@ -1,7 +1,7 @@
 package org.jhipster.foo.web.rest;
 
 import org.jhipster.foo.FooApp;
-
+import org.jhipster.foo.client.BarClient;
 import org.jhipster.foo.domain.Foo;
 import org.jhipster.foo.repository.FooRepository;
 import org.jhipster.foo.service.FooService;
@@ -49,6 +49,9 @@ public class FooResourceIntTest {
     private FooService fooService;
 
     @Autowired
+    private BarClient barClient;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -67,7 +70,7 @@ public class FooResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final FooResource fooResource = new FooResource(fooService);
+        final FooResource fooResource = new FooResource(fooService, barClient);
         this.restFooMockMvc = MockMvcBuilders.standaloneSetup(fooResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
