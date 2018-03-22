@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jhipster.gateway.service.dto.BarDTO;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,22 +16,50 @@ public class BarClient extends AbstractMicroserviceClient<BarDTO> {
     }
 
     public List<BarDTO> findAll() {
-        return Arrays.asList(restTemplate.exchange(getUrl("bars"), HttpMethod.GET, getJsonEntity(null), BarDTO[].class).getBody());
+        try {
+            ResponseEntity<BarDTO[]> response = doRequestToArray("bars", HttpMethod.GET, null, BarDTO[].class);
+            return Arrays.asList(response.getBody());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public BarDTO getOne(Long id) {
-        return restTemplate.exchange(getUrl("bars", 1), HttpMethod.GET, getJsonEntity(null), BarDTO.class).getBody();
+        try {
+            ResponseEntity<BarDTO> response = doRequest("bars/" + id, HttpMethod.GET, null, BarDTO.class);
+            return response.getBody();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public BarDTO create(BarDTO bar) {
-        return restTemplate.exchange(getUrl("bars"), HttpMethod.POST, getJsonEntity(bar), BarDTO.class).getBody();
+        try {
+            ResponseEntity<BarDTO> response = doRequest("bars", HttpMethod.POST, bar, BarDTO.class);
+            return response.getBody();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public BarDTO update(BarDTO bar) {
-        return restTemplate.exchange(getUrl("bars"), HttpMethod.PUT, getJsonEntity(bar), BarDTO.class).getBody();
+        try {
+            ResponseEntity<BarDTO> response = doRequest("bars", HttpMethod.PUT, bar, BarDTO.class);
+            return response.getBody();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void delete(Long id) {
-        restTemplate.exchange(getUrl("bars", id), HttpMethod.DELETE, getJsonEntity(null), BarDTO.class);
+        try {
+            doRequest("bars/" + id, HttpMethod.DELETE, null, BarDTO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
