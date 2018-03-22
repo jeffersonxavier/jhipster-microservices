@@ -3,6 +3,7 @@ package org.jhipster.foo.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpEntity;
@@ -23,16 +24,19 @@ public abstract class AbstractMicroserviceClient<T> {
     }
 
     @Autowired
-    protected RestTemplate restTemplate;
-
-    @Autowired
     private ObjectMapper mapper;
 
+    private RestTemplate restTemplate;
     private LoadBalancerClient loadBalancerClient;
 
     @Autowired(required = false)
     public void setLoadBalancerClient(LoadBalancerClient loadBalancerClient) {
         this.loadBalancerClient = loadBalancerClient;
+    }
+
+    @Autowired(required = false)
+    public void setRestTemplate(RestTemplateBuilder builder) {
+        this.restTemplate = builder.build();
     }
 
     protected ResponseEntity<T> doRequest(String path, HttpMethod method, Object entity, Class<T> clazz) throws RestClientException {
