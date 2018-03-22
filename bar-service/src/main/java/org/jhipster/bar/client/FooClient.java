@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jhipster.bar.service.dto.FooDTO;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,12 @@ public class FooClient extends AbstractMicroserviceClient<FooDTO> {
     }
 
     public List<FooDTO> findAll() {
-        return Arrays.asList(restTemplate.exchange(getUrl("foos"), HttpMethod.GET, getJsonEntity(null), FooDTO[].class).getBody());
+        try {
+            ResponseEntity<FooDTO[]> response = doRequestToArray("foos", HttpMethod.GET, null, FooDTO[].class);
+            return Arrays.asList(response.getBody());    
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
