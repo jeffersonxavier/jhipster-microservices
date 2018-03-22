@@ -6,18 +6,23 @@ import java.util.List;
 import org.jhipster.gateway.service.dto.BarDTO;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import br.com.parebem.clientProvider.MicroserviceClient;
+
 @Component
-public class BarClient extends AbstractMicroserviceClient<BarDTO> {
+public class BarClient extends MicroserviceClient<BarDTO> {
 
     public BarClient() {
         super("bar");
     }
 
     public List<BarDTO> findAll() {
+        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+
         try {
-            ResponseEntity<BarDTO[]> response = doRequestToArray("bars", HttpMethod.GET, null, BarDTO[].class);
+            ResponseEntity<BarDTO[]> response = doRequestToArray(authorization, "bars", HttpMethod.GET, null, BarDTO[].class);
             return Arrays.asList(response.getBody());
         } catch (Exception e) {
             e.printStackTrace();
@@ -26,8 +31,10 @@ public class BarClient extends AbstractMicroserviceClient<BarDTO> {
     }
 
     public BarDTO getOne(Long id) {
+        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+
         try {
-            ResponseEntity<BarDTO> response = doRequest("bars/" + id, HttpMethod.GET, null, BarDTO.class);
+            ResponseEntity<BarDTO> response = doRequest(authorization, "bars/" + id, HttpMethod.GET, null, BarDTO.class);
             return response.getBody();
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,8 +43,10 @@ public class BarClient extends AbstractMicroserviceClient<BarDTO> {
     }
 
     public BarDTO create(BarDTO bar) {
+        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        
         try {
-            ResponseEntity<BarDTO> response = doRequest("bars", HttpMethod.POST, bar, BarDTO.class);
+            ResponseEntity<BarDTO> response = doRequest(authorization, "bars", HttpMethod.POST, bar, BarDTO.class);
             return response.getBody();
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,8 +55,10 @@ public class BarClient extends AbstractMicroserviceClient<BarDTO> {
     }
 
     public BarDTO update(BarDTO bar) {
+        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+
         try {
-            ResponseEntity<BarDTO> response = doRequest("bars", HttpMethod.PUT, bar, BarDTO.class);
+            ResponseEntity<BarDTO> response = doRequest(authorization, "bars", HttpMethod.PUT, bar, BarDTO.class);
             return response.getBody();
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,8 +67,10 @@ public class BarClient extends AbstractMicroserviceClient<BarDTO> {
     }
 
     public void delete(Long id) {
+        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+
         try {
-            doRequest("bars/" + id, HttpMethod.DELETE, null, BarDTO.class);
+            doRequest(authorization, "bars/" + id, HttpMethod.DELETE, null, BarDTO.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
