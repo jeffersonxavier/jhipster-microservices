@@ -14,7 +14,7 @@ public class FooClient extends AbstractMicroserviceClient<FooDTO> {
 
     public FooDTO getOne(Long id) {
         try {
-            ResponseEntity<FooDTO> response = doRequest("foos", HttpMethod.GET, null, FooDTO.class);
+            ResponseEntity<FooDTO> response = doRequest("foos/" + id, HttpMethod.GET, null, FooDTO.class);
             return response.getBody();
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,6 +1,4 @@
-package org.jhipster.foo.client;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+package br.com.parebem.clientProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -11,40 +9,41 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-public abstract class AbstractMicroserviceClient<T> {
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-    private String serviceName;
+public class MicroserviceClient<T> {
 
-    public AbstractMicroserviceClient(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    @Autowired
+	private String serviceName;
+	
+	public MicroserviceClient(String serviceName) {
+		this.serviceName = serviceName;
+	}
+	
+	@Autowired
     private ObjectMapper mapper;
-
-    private RestTemplate restTemplate;
-    private LoadBalancerClient loadBalancerClient;
-
-    @Autowired(required = false)
-    public void setLoadBalancerClient(LoadBalancerClient loadBalancerClient) {
-        this.loadBalancerClient = loadBalancerClient;
-    }
-
-    @Autowired(required = false)
+	
+	private RestTemplate restTemplate;
+	private LoadBalancerClient loadBalancerClient;
+	
+	@Autowired(required = false)
     public void setRestTemplate(RestTemplateBuilder builder) {
         this.restTemplate = builder.build();
     }
-
-    protected ResponseEntity<T> doRequest(String path, HttpMethod method, Object entity, Class<T> clazz) throws RestClientException {
-        return restTemplate.exchange(getUrl(path), method, buildJsonEntity(entity), clazz);
+	
+	@Autowired(required = false)
+    public void setLoadBalancerClient(LoadBalancerClient loadBalancerClient) {
+        this.loadBalancerClient = loadBalancerClient;
+    }
+	
+	protected ResponseEntity<T> doRequest(String authorizationToken, String path, HttpMethod method, Object entity, Class<T> clazz) throws RestClientException {
+        return restTemplate.exchange(getUrl(path), method, buildJsonEntity(authorizationToken, entity), clazz);
     }
 
-    protected ResponseEntity<T[]> doRequestToArray(String path, HttpMethod method, Object entity, Class<T[]> clazz) throws RestClientException {
-        return restTemplate.exchange(getUrl(path), method, buildJsonEntity(entity), clazz);
+    protected ResponseEntity<T[]> doRequestToArray(String authorizationToken, String path, HttpMethod method, Object entity, Class<T[]> clazz) throws RestClientException {
+        return restTemplate.exchange(getUrl(path), method, buildJsonEntity(authorizationToken, entity), clazz);
     }
 
     private String getUrl(String path) {
@@ -57,10 +56,10 @@ public abstract class AbstractMicroserviceClient<T> {
         return url;
     }
 
-    private HttpEntity<String> buildJsonEntity(Object entity) {
+    private HttpEntity<String> buildJsonEntity(String authorizationToken, Object entity) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + SecurityContextHolder.getContext().getAuthentication().getCredentials());
+        headers.set("Authorization", "Bearer " + authorizationToken);
 
         HttpEntity<String> result = new HttpEntity<>(headers);
 
@@ -74,4 +73,8 @@ public abstract class AbstractMicroserviceClient<T> {
 
         return result;
     }
+	
+	public String print() {
+		return "=======================\nTESTE DA CLASSE - " + this.serviceName + "...\n=======================";
+	}
 }
