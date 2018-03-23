@@ -1,5 +1,7 @@
 package br.com.parebem.clientProvider;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.ServiceInstance;
@@ -12,42 +14,52 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MicroserviceClient<T> {
+public abstract class MicroserviceClient {
 
-	private String serviceName;
-	
-	public MicroserviceClient(String serviceName) {
-		this.serviceName = serviceName;
-	}
-	
-	@Autowired
+    private static String serviceName;
+    
+    private static ObjectMapper staticMapper;
+    
+    @Autowired
     private ObjectMapper mapper;
 	
-	private RestTemplate restTemplate;
-	private LoadBalancerClient loadBalancerClient;
+	public MicroserviceClient(String serviceName) {
+		MicroserviceClient.serviceName = serviceName;
+    }
+	
+    private static LoadBalancerClient loadBalancerClient;
+    private static RestTemplate restTemplate;
 	
 	@Autowired(required = false)
     public void setRestTemplate(RestTemplateBuilder builder) {
-        this.restTemplate = builder.build();
+        MicroserviceClient.restTemplate = builder.build();
     }
 	
 	@Autowired(required = false)
     public void setLoadBalancerClient(LoadBalancerClient loadBalancerClient) {
-        this.loadBalancerClient = loadBalancerClient;
+        MicroserviceClient.loadBalancerClient = loadBalancerClient;
     }
 	
-	protected ResponseEntity<T> doRequest(String authorizationToken, String path, HttpMethod method, Object entity, Class<T> clazz) throws RestClientException {
+	@PostConstruct
+	public void init() {
+		MicroserviceClient.staticMapper = mapper;
+	}
+	
+	protected static<E> ResponseEntity<E> doRequest(String authorizationToken, String path, HttpMethod method, Object entity, Class<E> clazz)
+			throws JsonProcessingException, RestClientException {
         return restTemplate.exchange(getUrl(path), method, buildJsonEntity(authorizationToken, entity), clazz);
     }
 
-    protected ResponseEntity<T[]> doRequestToArray(String authorizationToken, String path, HttpMethod method, Object entity, Class<T[]> clazz) throws RestClientException {
+    protected static<E> ResponseEntity<E[]> doRequestToArray(String authorizationToken, String path, HttpMethod method, Object entity, Class<E[]> clazz)
+    		throws JsonProcessingException, RestClientException {
         return restTemplate.exchange(getUrl(path), method, buildJsonEntity(authorizationToken, entity), clazz);
     }
 
-    private String getUrl(String path) {
-        ServiceInstance instance = this.loadBalancerClient.choose(this.serviceName);
+    private static String getUrl(String path) {
+        ServiceInstance instance = loadBalancerClient.choose(serviceName);
         
         String prefix = instance.isSecure() ? "https://" : "http://";
         String url = prefix + instance.getHost() + ":" + instance.getPort() + "/api/" + path;
@@ -56,25 +68,18 @@ public class MicroserviceClient<T> {
         return url;
     }
 
-    private HttpEntity<String> buildJsonEntity(String authorizationToken, Object entity) {
+    private static HttpEntity<String> buildJsonEntity(String authorizationToken, Object entity) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + authorizationToken);
 
         HttpEntity<String> result = new HttpEntity<>(headers);
-
-        try {
-            String entityJson = mapper.writeValueAsString(entity);
-            result = new HttpEntity<>(entityJson, result.getHeaders()); 
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = null;
+        
+        if (entity != null) {
+        	String entityJson = staticMapper.writeValueAsString(entity);
+            result = new HttpEntity<>(entityJson, result.getHeaders());
         }
 
         return result;
     }
-	
-	public String print() {
-		return "=======================\nTESTE DA CLASSE - " + this.serviceName + "...\n=======================";
-	}
 }
