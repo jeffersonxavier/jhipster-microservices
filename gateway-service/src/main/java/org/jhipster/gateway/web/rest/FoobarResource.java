@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 
 import org.jhipster.gateway.client.BarClient;
 import org.jhipster.gateway.client.FooClient;
+import org.jhipster.gateway.client.GeneralClient;
 import org.jhipster.gateway.domain.Foobar;
 import org.jhipster.gateway.service.FoobarService;
 import org.jhipster.gateway.service.dto.BarDTO;
@@ -36,13 +37,15 @@ public class FoobarResource {
 
     private final FoobarService foobarService;
 
-    private BarClient barClient;
-    private FooClient fooClient;
+    private final BarClient barClient;
+    private final FooClient fooClient;
+    private final GeneralClient generalClient;
 
-    public FoobarResource(FoobarService foobarService, BarClient barClient, FooClient fooClient) {
+    public FoobarResource(FoobarService foobarService, BarClient barClient, FooClient fooClient, GeneralClient generalClient) {
         this.foobarService = foobarService;
         this.barClient = barClient;
         this.fooClient = fooClient;
+        this.generalClient = generalClient;
     }
 
     /**
@@ -96,6 +99,9 @@ public class FoobarResource {
     @Timed
     public List<Foobar> getAllFoobars() {
         log.debug("REST request to get all Foobars");
+
+        String general = generalClient.randomRequest();
+        log.debug("GENERAL REQUEST: {}", general);
 
         BarDTO bar = barClient.getOne(1L);
         FooDTO foo = fooClient.getOne(1L);
