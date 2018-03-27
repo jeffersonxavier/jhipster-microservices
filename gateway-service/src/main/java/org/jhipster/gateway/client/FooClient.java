@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 import br.com.parebem.clientProvider.MicroserviceClient;
 
 @Component
-public class FooClient extends MicroserviceClient<FooDTO> {
+public class FooClient extends MicroserviceClient {
 
     public FooClient() {
         super("foo");
     }
 
     public FooDTO getOne(Long id) {
-        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String authorization = "Bearer " + SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
 
         try {
             ResponseEntity<FooDTO> response = doRequest(authorization, "foos/" + id, HttpMethod.GET, null, FooDTO.class);

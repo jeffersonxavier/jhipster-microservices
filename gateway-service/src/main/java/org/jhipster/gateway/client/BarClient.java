@@ -12,14 +12,14 @@ import org.springframework.stereotype.Component;
 import br.com.parebem.clientProvider.MicroserviceClient;
 
 @Component
-public class BarClient extends MicroserviceClient<BarDTO> {
+public class BarClient extends MicroserviceClient {
 
     public BarClient() {
         super("bar");
     }
 
     public List<BarDTO> findAll() {
-        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String authorization = "Bearer " + SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
 
         try {
             ResponseEntity<BarDTO[]> response = doRequestToArray(authorization, "bars", HttpMethod.GET, null, BarDTO[].class);
@@ -31,7 +31,7 @@ public class BarClient extends MicroserviceClient<BarDTO> {
     }
 
     public BarDTO getOne(Long id) {
-        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String authorization = "Bearer " + SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
 
         try {
             ResponseEntity<BarDTO> response = doRequest(authorization, "bars/" + id, HttpMethod.GET, null, BarDTO.class);
@@ -43,7 +43,7 @@ public class BarClient extends MicroserviceClient<BarDTO> {
     }
 
     public BarDTO create(BarDTO bar) {
-        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String authorization = "Bearer " + SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
         
         try {
             ResponseEntity<BarDTO> response = doRequest(authorization, "bars", HttpMethod.POST, bar, BarDTO.class);
@@ -55,7 +55,7 @@ public class BarClient extends MicroserviceClient<BarDTO> {
     }
 
     public BarDTO update(BarDTO bar) {
-        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String authorization = "Bearer " + SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
 
         try {
             ResponseEntity<BarDTO> response = doRequest(authorization, "bars", HttpMethod.PUT, bar, BarDTO.class);
@@ -67,7 +67,7 @@ public class BarClient extends MicroserviceClient<BarDTO> {
     }
 
     public void delete(Long id) {
-        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String authorization = "Bearer " + SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
 
         try {
             doRequest(authorization, "bars/" + id, HttpMethod.DELETE, null, BarDTO.class);

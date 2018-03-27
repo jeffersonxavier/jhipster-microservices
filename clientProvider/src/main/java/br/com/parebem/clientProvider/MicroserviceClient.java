@@ -34,28 +34,38 @@ public abstract class MicroserviceClient {
     private static RestTemplate restTemplate;
 	
 	@Autowired(required = false)
-    public void setRestTemplate(RestTemplateBuilder builder) {
+    private void setRestTemplate(RestTemplateBuilder builder) {
         MicroserviceClient.restTemplate = builder.build();
     }
 	
 	@Autowired(required = false)
-    public void setLoadBalancerClient(LoadBalancerClient loadBalancerClient) {
+    private void setLoadBalancerClient(LoadBalancerClient loadBalancerClient) {
         MicroserviceClient.loadBalancerClient = loadBalancerClient;
     }
 	
 	@PostConstruct
-	public void init() {
+	private void init() {
 		MicroserviceClient.staticMapper = mapper;
 	}
 	
-	protected static<E> ResponseEntity<E> doRequest(String authorizationToken, String path, HttpMethod method, Object entity, Class<E> clazz)
+	protected static<E> ResponseEntity<E> doRequest(String authHeader, String path, HttpMethod method, Object entity, Class<E> clazz)
 			throws JsonProcessingException, RestClientException {
-        return restTemplate.exchange(getUrl(path), method, buildJsonEntity(authorizationToken, entity), clazz);
+        return restTemplate.exchange(getUrl(path), method, buildJsonEntity(authHeader, entity), clazz);
     }
 
-    protected static<E> ResponseEntity<E[]> doRequestToArray(String authorizationToken, String path, HttpMethod method, Object entity, Class<E[]> clazz)
+    protected static<E> ResponseEntity<E[]> doRequestToArray(String authHeader, String path, HttpMethod method, Object entity, Class<E[]> clazz)
     		throws JsonProcessingException, RestClientException {
-        return restTemplate.exchange(getUrl(path), method, buildJsonEntity(authorizationToken, entity), clazz);
+        return restTemplate.exchange(getUrl(path), method, buildJsonEntity(authHeader, entity), clazz);
+    }
+    
+    protected static<E> ResponseEntity<E> doRequest(String authHeader, String baseUrl, String path, HttpMethod method, Object entity, Class<E> clazz)
+			throws JsonProcessingException, RestClientException {
+        return restTemplate.exchange(baseUrl + path, method, buildJsonEntity(authHeader, entity), clazz);
+    }
+
+    protected static<E> ResponseEntity<E[]> doRequestToArray(String authHeader, String baseUrl, String path, HttpMethod method, Object entity, Class<E[]> clazz)
+    		throws JsonProcessingException, RestClientException {
+        return restTemplate.exchange(baseUrl + path, method, buildJsonEntity(authHeader, entity), clazz);
     }
 
     private static String getUrl(String path) {
@@ -68,10 +78,12 @@ public abstract class MicroserviceClient {
         return url;
     }
 
-    private static HttpEntity<String> buildJsonEntity(String authorizationToken, Object entity) throws JsonProcessingException {
+    private static HttpEntity<String> buildJsonEntity(String authHeader, Object entity) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + authorizationToken);
+        
+        if (authHeader != null && !authHeader.isEmpty())
+        	headers.set("Authorization", authHeader);
 
         HttpEntity<String> result = new HttpEntity<>(headers);
         

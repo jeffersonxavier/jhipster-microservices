@@ -12,14 +12,14 @@ import org.springframework.stereotype.Component;
 import br.com.parebem.clientProvider.MicroserviceClient;
 
 @Component
-public class BarClient extends MicroserviceClient<BarDTO> {
+public class BarClient extends MicroserviceClient {
 
     public BarClient() {
         super("bar");
     }
 
     public List<BarDTO> findAll() {
-        String authorization = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
+        String authorization = "Bearer " + SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
         
         try {
             ResponseEntity<BarDTO[]> response = doRequestToArray(authorization, "bars", HttpMethod.GET, null, BarDTO[].class);
