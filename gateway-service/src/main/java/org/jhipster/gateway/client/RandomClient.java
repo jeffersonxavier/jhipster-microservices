@@ -4,14 +4,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import br.com.parebem.clientProvider.MicroserviceClient;
+import br.com.parebem.clientProvider.GeneralClient;
 
 @Component
-public class GeneralClient extends MicroserviceClient {
-
-    public GeneralClient() {
-        super("");
-    }
+public class RandomClient extends GeneralClient {
 
     public String randomRequest() {
         try {
